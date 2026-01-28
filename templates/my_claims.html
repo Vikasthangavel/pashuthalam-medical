@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Claims - Pashuthalam</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #27ae60;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --dark-text: #2c3e50;
+            --light-text: #7f8c8d;
+            --border-color: #e9ecef;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 25px rgba(0,0,0,0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        /* Navigation - Reuse from dashboard */
+        .navbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 70px;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .nav-brand i {
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+        
+        .brand-logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--secondary-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .profile-info {
+            text-align: right;
+        }
+        
+        .profile-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+        
+        .profile-role {
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+        
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .profile-avatar:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .logout-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: var(--light-text);
+            font-size: 1.1rem;
+        }
+        
+        /* Filters and Controls */
+        .controls {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .controls-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 1rem;
+        }
+        
+        .controls-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+        
+        .filter-input {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        .filter-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-btn:hover {
+            background: #219a52;
+            transform: translateY(-1px);
+        }
+        
+        .clear-btn {
+            background: transparent;
+            color: var(--light-text);
+            border: 1px solid var(--border-color);
+        }
+        
+        .clear-btn:hover {
+            background: var(--light-bg);
+            color: var(--dark-text);
+        }
+        
+        /* Claims Grid */
+        .claims-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .claims-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+        }
+        
+        .claims-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .claims-count {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .claims-grid {
+            display: grid;
+            gap: 1px;
+            background: var(--border-color);
+        }
+        
+        .claim-item {
+            background: var(--white);
+            padding: 1.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .claim-item:hover {
+            background: rgba(39, 174, 96, 0.02);
+        }
+        
+        .claim-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: between;
+            margin-bottom: 1rem;
+        }
+        
+        .claim-id {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .claim-date {
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .claim-status {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .claim-status.completed {
+            background: rgba(39, 174, 96, 0.15);
+            color: var(--success-color);
+        }
+        
+        .claim-status.pending {
+            background: rgba(243, 156, 18, 0.15);
+            color: var(--warning-color);
+        }
+        
+        .claim-status.processing {
+            background: rgba(52, 152, 219, 0.15);
+            color: var(--accent-color);
+        }
+        
+        .claim-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .info-label {
+            font-size: 0.8rem;
+            color: var(--light-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 0.95rem;
+            color: var(--dark-text);
+            font-weight: 500;
+        }
+        
+        .claim-medicines {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .medicines-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .medicine-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .medicine-tag {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--secondary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--light-text);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+        
+        .empty-state p {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .empty-action {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .empty-action:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            color: var(--light-text);
+        }
+        
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 8px;
+            min-width: 70px;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--secondary-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mobile-nav-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-container {
+                padding: 1.5rem;
+            }
+            
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 90px;
+            }
+            
+            .navbar {
+                display: none;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .mobile-nav {
+                display: block;
+            }
+            
+            .claim-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .claim-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem 0.75rem;
+            }
+            
+            .controls {
+                padding: 1rem;
+            }
+            
+            .claim-item {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="nav-brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Pashuthalam Logo" class="brand-logo" />
+                Pashuthalam
+            </a>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/my-claims" class="nav-link active">
+                        <i class="fas fa-clipboard-list"></i>
+                        My Claims
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="nav-profile">
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName">Loading...</div>
+                    <div class="profile-role">Medical Shop</div>
+                </div>
+                <div class="profile-avatar" id="profileAvatar">
+                    MS
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">My Claims</h1>
+            <p class="page-subtitle">View and manage all your claimed recommendations</p>
+        </div>
+
+        <!-- Filters and Controls -->
+        <div class="controls">
+            <div class="controls-header">
+                <h2 class="controls-title">
+                    <i class="fas fa-filter"></i>
+                    Filter Claims
+                </h2>
+            </div>
+            
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select class="filter-input" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">From Date</label>
+                    <input type="date" class="filter-input" id="fromDate">
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">To Date</label>
+                    <input type="date" class="filter-input" id="toDate">
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Search</label>
+                    <input type="text" class="filter-input" id="searchInput" placeholder="Farmer name or Rec ID...">
+                </div>
+                
+                <div class="filter-group">
+                    <button class="filter-btn" onclick="applyFilters()">
+                        <i class="fas fa-search"></i>
+                        Apply
+                    </button>
+                </div>
+                
+                <div class="filter-group">
+                    <button class="filter-btn clear-btn" onclick="clearFilters()">
+                        <i class="fas fa-times"></i>
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Claims Container -->
+        <div class="claims-container">
+            <div class="claims-header">
+                <h2 class="claims-title">
+                    <i class="fas fa-clipboard-check"></i>
+                    Your Claims
+                    <span class="claims-count" id="claimsCount">0</span>
+                </h2>
+            </div>
+            
+            <div class="claims-grid" id="claimsGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading your claims...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="/dashboard" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="mobile-nav-text">Dashboard</div>
+            </a>
+            <a href="/my-claims" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="mobile-nav-text">My Claims</div>
+            </a>
+            <a href="/profile" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="mobile-nav-text">Profile</div>
+            </a>
+            <a href="/reports" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="mobile-nav-text">Reports</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        let currentClaims = [];
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileInfo();
+            loadClaims();
+        });
+
+        async function loadProfileInfo() {
+            try {
+                const response = await fetch('/shop/profile');
+                const data = await response.json();
+                
+                if (response.ok && data.shop) {
+                    document.getElementById('profileName').textContent = data.shop.shop_name;
+                    const initials = data.shop.shop_name.split(' ').map(word => word[0]).join('').substring(0, 2);
+                    document.getElementById('profileAvatar').textContent = initials.toUpperCase();
+                } else {
+                    document.getElementById('profileName').textContent = 'Medical Shop';
+                }
+            } catch (error) {
+                console.error('Error loading profile info:', error);
+                document.getElementById('profileName').textContent = 'Medical Shop';
+            }
+        }
+
+        async function loadClaims() {
+            try {
+                const response = await fetch('/shop/claimed-recommendations');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentClaims = data.recommendations || [];
+                    displayClaims(currentClaims);
+                    updateClaimsCount(currentClaims.length);
+                } else {
+                    showError('Failed to load claims');
+                }
+            } catch (error) {
+                console.error('Error loading claims:', error);
+                showError('Error loading claims');
+            }
+        }
+
+        function displayClaims(claims) {
+            const grid = document.getElementById('claimsGrid');
+            
+            if (!claims || claims.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>No Claims Found</h3>
+                        <p>You haven't claimed any recommendations yet. Start browsing available recommendations to begin.</p>
+                        <a href="/dashboard" class="empty-action">
+                            <i class="fas fa-home"></i>
+                            Go to Dashboard
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = claims.map(claim => `
+                <div class="claim-item" onclick="viewClaimDetails(${claim.id})">
+                    <div class="claim-header">
+                        <div>
+                            <div class="claim-id">Recommendation #${claim.id}</div>
+                            <div class="claim-date">${formatDate(claim.claimed_at)}</div>
+                        </div>
+                        <div class="claim-status ${getStatusClass(claim.status)}">
+                            ${claim.status || 'Claimed'}
+                        </div>
+                    </div>
+                    
+                    <div class="claim-info">
+                        <div class="info-item">
+                            <div class="info-label">Farmer Name</div>
+                            <div class="info-value">${claim.farmer_name || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value">${claim.farmer_phone || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">District</div>
+                            <div class="info-value">${claim.district || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Crop</div>
+                            <div class="info-value">${claim.crop_name || 'N/A'}</div>
+                        </div>
+                    </div>
+                    
+                    ${claim.medicines && claim.medicines.length > 0 ? `
+                        <div class="claim-medicines">
+                            <div class="medicines-title">
+                                <i class="fas fa-pills"></i>
+                                Medicines (${claim.medicines.length})
+                            </div>
+                            <div class="medicine-list">
+                                ${claim.medicines.slice(0, 3).map(med => `
+                                    <span class="medicine-tag">${med.medicine_name}</span>
+                                `).join('')}
+                                ${claim.medicines.length > 3 ? `
+                                    <span class="medicine-tag">+${claim.medicines.length - 3} more</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            if (!status) return 'completed';
+            return status.toLowerCase();
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Recently';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function updateClaimsCount(count) {
+            document.getElementById('claimsCount').textContent = count;
+        }
+
+        function applyFilters() {
+            const status = document.getElementById('statusFilter').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filteredClaims = [...currentClaims];
+            
+            if (status) {
+                filteredClaims = filteredClaims.filter(claim => 
+                    (claim.status || 'completed').toLowerCase() === status.toLowerCase()
+                );
+            }
+            
+            if (fromDate) {
+                filteredClaims = filteredClaims.filter(claim => 
+                    new Date(claim.claimed_at) >= new Date(fromDate)
+                );
+            }
+            
+            if (toDate) {
+                filteredClaims = filteredClaims.filter(claim => 
+                    new Date(claim.claimed_at) <= new Date(toDate + 'T23:59:59')
+                );
+            }
+            
+            if (search) {
+                filteredClaims = filteredClaims.filter(claim => 
+                    (claim.farmer_name || '').toLowerCase().includes(search) ||
+                    claim.id.toString().includes(search) ||
+                    (claim.farmer_phone || '').includes(search)
+                );
+            }
+            
+            displayClaims(filteredClaims);
+            updateClaimsCount(filteredClaims.length);
+        }
+
+        function clearFilters() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('fromDate').value = '';
+            document.getElementById('toDate').value = '';
+            document.getElementById('searchInput').value = '';
+            
+            displayClaims(currentClaims);
+            updateClaimsCount(currentClaims.length);
+        }
+
+        function viewClaimDetails(claimId) {
+            // Here you could redirect to a detailed view or show a modal
+            console.log('View claim details for:', claimId);
+            // For now, just show an alert
+            alert(`Viewing details for Recommendation #${claimId}`);
+        }
+
+        function showError(message) {
+            const grid = document.getElementById('claimsGrid');
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Claims</h3>
+                    <p>${message}</p>
+                    <button class="empty-action" onclick="loadClaims()">
+                        <i class="fas fa-redo"></i>
+                        Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/logout', { method: 'POST' })
+                    .then(() => {
+                        window.location.href = '/';
+                    })
+                    .catch((error) => {
+                        console.error('Logout error:', error);
+                        window.location.href = '/';
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

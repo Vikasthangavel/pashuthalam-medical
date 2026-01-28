@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Search - Medical Shop Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .main-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+        
+        .card h2 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .recommendation-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .medicine-item {
+            background: white;
+            border-left: 4px solid #4facfe;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-available {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-claimed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid #dc3545;
+            margin: 1rem 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 Advanced Search</h1>
+        <div class="nav-buttons">
+            <a href="/dashboard" class="nav-btn">🏠 Dashboard</a>
+            <a href="/my-claims" class="nav-btn">📋 My Claims</a>
+            <a href="/profile" class="nav-btn">👤 Profile</a>
+            <button onclick="logout()" class="nav-btn">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Search Form -->
+        <div class="card">
+            <h2>🔍 Search Recommendations</h2>
+            <form id="searchForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="pincode">Pincode:</label>
+                        <input type="text" id="pincode" name="pincode" placeholder="e.g. 123456">
+                    </div>
+                    <div class="form-group">
+                        <label for="disease">Disease:</label>
+                        <input type="text" id="disease" name="disease" placeholder="e.g. Fever">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="animal_type">Animal Type:</label>
+                        <select id="animal_type" name="animal_type">
+                            <option value="">All Animals</option>
+                            <option value="Cow">Cow</option>
+                            <option value="Buffalo">Buffalo</option>
+                            <option value="Goat">Goat</option>
+                            <option value="Sheep">Sheep</option>
+                            <option value="Pig">Pig</option>
+                            <option value="Chicken">Chicken</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="antibiotic_name">Medicine Name:</label>
+                        <input type="text" id="antibiotic_name" name="antibiotic_name" placeholder="e.g. Amoxicillin">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="is_claimed">Status:</label>
+                    <select id="is_claimed" name="is_claimed">
+                        <option value="">All</option>
+                        <option value="false">Available</option>
+                        <option value="true">Claimed</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">🔍 Search Recommendations</button>
+            </form>
+        </div>
+
+        <!-- Search Results -->
+        <div class="card" id="resultsCard" style="display: none;">
+            <h2>📋 Search Results</h2>
+            <div id="searchResults"></div>
+        </div>
+    </div>
+
+    <script>
+        // Search form handler
+        document.getElementById('searchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const params = new URLSearchParams();
+            
+            // Add non-empty parameters
+            for (let [key, value] of formData.entries()) {
+                if (value.trim()) {
+                    params.append(key, value);
+                }
+            }
+            
+            await searchRecommendations(params);
+        });
+
+        async function searchRecommendations(params) {
+            try {
+                showLoading();
+                
+                const response = await fetch('/recommendations/search?' + params);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displaySearchResults(result.recommendations);
+                } else {
+                    if (response.status === 401) {
+                        window.location.href = '/';
+                    } else {
+                        showError('Search failed: ' + result.error);
+                    }
+                }
+            } catch (error) {
+                showError('Search failed: ' + error.message);
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('resultsCard').style.display = 'block';
+            document.getElementById('searchResults').innerHTML = 
+                '<div class="loading">🔍 Searching recommendations...</div>';
+        }
+
+        function showError(message) {
+            document.getElementById('resultsCard').style.display = 'block';
+            document.getElementById('searchResults').innerHTML = 
+                `<div class="error">${message}</div>`;
+        }
+
+        function displaySearchResults(recommendations) {
+            const container = document.getElementById('searchResults');
+            
+            if (recommendations.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #666;">No recommendations found matching your criteria</div>';
+                return;
+            }
+
+            let html = `<div style="margin-bottom: 1rem;"><strong>Found ${recommendations.length} recommendation(s)</strong></div>`;
+            
+            recommendations.forEach(rec => {
+                const statusClass = rec.is_claimed ? 'status-claimed' : 'status-available';
+                const statusText = rec.is_claimed ? '❌ Claimed' : '✅ Available';
+                
+                html += `
+                    <div class="recommendation-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h3 style="color: #2d3748;">Recommendation #${rec.id}</h3>
+                                <p><strong>Farmer:</strong> ${rec.farmer.name} (${rec.farmer.mobile_no})</p>
+                                <p><strong>Doctor:</strong> ${rec.doctor.doctor_name} - ${rec.doctor.hospital_name}</p>
+                                <p><strong>Location:</strong> ${rec.farmer.area}, Pincode: ${rec.farmer.pincode}</p>
+                            </div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        
+                        <h4 style="margin: 1rem 0;">💊 Medicine Details:</h4>
+                `;
+                
+                rec.items.forEach(item => {
+                    html += `
+                        <div class="medicine-item">
+                            <p><strong>Medicine:</strong> ${item.antibiotic_name}</p>
+                            <p><strong>Disease:</strong> ${item.disease}</p>
+                            <p><strong>Animal:</strong> ${item.animal_type} (${item.weight}kg, ${item.age} days)</p>
+                            <p><strong>Dosage:</strong> ${item.single_dose_ml}ml × ${item.daily_frequency}/day for ${item.treatment_days} days</p>
+                            <p><strong>Total Required:</strong> ${item.total_treatment_dosage_ml}ml</p>
+                        </div>
+                    `;
+                });
+                
+                if (rec.is_claimed) {
+                    html += `
+                        <div style="margin-top: 1rem; padding: 0.5rem; background: #f8d7da; color: #721c24; border-radius: 4px;">
+                            <strong>Claimed by:</strong> ${rec.claimed_by_shop ? rec.claimed_by_shop.shop_name : 'Unknown'}<br>
+                            <strong>Claimed on:</strong> ${new Date(rec.claimed_at).toLocaleString()}
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div style="margin-top: 1rem;">
+                            <button onclick="claimRecommendation(${rec.id})" class="btn btn-primary">
+                                🎯 Claim This Recommendation
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function showClaimModal(recommendationId) {
+            // Get today's date in YYYY-MM-DD format
+            const today = new Date();
+            const todayStr = today.getFullYear() + '-' + 
+                String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(today.getDate()).padStart(2, '0');
+            
+            const modalHtml = `
+                <div id="claimModal" style="
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.5); display: flex; justify-content: center; 
+                    align-items: center; z-index: 1000;">
+                    <div style="
+                        background: white; padding: 2rem; border-radius: 10px; 
+                        box-shadow: 0 4px 20px rgba(0,0,0,0.3); max-width: 400px; width: 90%;">
+                        <h3 style="margin: 0 0 1rem 0; color: #2d3748;">Claim Recommendation</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Start Date:</label>
+                            <input type="date" id="startDateInput" value="${todayStr}" min="${todayStr}" 
+                                style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Notes (Optional):</label>
+                            <textarea id="notesInput" placeholder="Enter any notes..." 
+                                style="width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; resize: vertical; height: 60px;"></textarea>
+                        </div>
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button onclick="closeClaimModal()" 
+                                style="padding: 0.5rem 1rem; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer;">
+                                Cancel
+                            </button>
+                            <button onclick="submitClaim(${recommendationId})" 
+                                style="padding: 0.5rem 1rem; border: none; background: #4CAF50; color: white; border-radius: 4px; cursor: pointer;">
+                                Claim Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function closeClaimModal() {
+            const modal = document.getElementById('claimModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function submitClaim(recommendationId) {
+            const startDate = document.getElementById('startDateInput').value;
+            const notes = document.getElementById('notesInput').value.trim();
+            
+            if (!startDate) {
+                alert("Please select a start date.");
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/recommendations/${recommendationId}/claim`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        start_date: startDate,
+                        notes: notes || '' 
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    closeClaimModal();
+                    alert(`✅ Recommendation #${recommendationId} claimed successfully!\nTreatment will start on: ${startDate}\nTreatment will end on: ${result.end_date}`);
+                    // Refresh search results
+                    document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+                } else {
+                    alert('Failed to claim: ' + result.error);
+                }
+            } catch (error) {
+                alert('Failed to claim: ' + error.message);
+            }
+        }
+
+        // Keep the old function name for backward compatibility
+        async function claimRecommendation(recommendationId) {
+            showClaimModal(recommendationId);
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/shop/logout', {
+                    method: 'POST'
+                });
+                
+                // Redirect to login page regardless of response
+                window.location.href = '/';
+            } catch (error) {
+                // Still redirect on error
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Pashuthalam</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #27ae60;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --dark-text: #2c3e50;
+            --light-text: #7f8c8d;
+            --border-color: #e9ecef;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 25px rgba(0,0,0,0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        /* Navigation - Reuse from dashboard */
+        .navbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 70px;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .nav-brand i {
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+        
+        .brand-logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--secondary-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .profile-info {
+            text-align: right;
+        }
+        
+        .profile-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+        
+        .profile-role {
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+        
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .profile-avatar:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .logout-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: var(--light-text);
+            font-size: 1.1rem;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .filter-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+        
+        .filter-input {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        .filter-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-btn:hover {
+            background: #219a52;
+            transform: translateY(-1px);
+        }
+        
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .chart-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .chart-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+        }
+        
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .chart-body {
+            padding: 1.5rem;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chart-canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        /* Summary Cards */
+        .summary-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .summary-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--secondary-color);
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .summary-title {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .summary-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        }
+        
+        .summary-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-desc {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        /* Data Table */
+        .table-section {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: between;
+        }
+        
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .export-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .export-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table th {
+            background: var(--light-bg);
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .data-table td {
+            color: var(--dark-text);
+        }
+        
+        .data-table tr:hover {
+            background: rgba(39, 174, 96, 0.02);
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-badge.completed {
+            background: rgba(39, 174, 96, 0.15);
+            color: var(--success-color);
+        }
+        
+        .status-badge.pending {
+            background: rgba(243, 156, 18, 0.15);
+            color: var(--warning-color);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--light-text);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+        
+        .empty-state p {
+            font-size: 1rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            color: var(--light-text);
+        }
+        
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 8px;
+            min-width: 70px;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--secondary-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mobile-nav-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-container {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 90px;
+            }
+            
+            .navbar {
+                display: none;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .mobile-nav {
+                display: block;
+            }
+            
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-body {
+                padding: 1rem;
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem 0.75rem;
+            }
+            
+            .summary-card {
+                padding: 1.5rem;
+            }
+            
+            .summary-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="nav-brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Pashuthalam Logo" class="brand-logo" />
+                Pashuthalam
+            </a>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/my-claims" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        My Claims
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports" class="nav-link active">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="nav-profile">
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName">Loading...</div>
+                    <div class="profile-role">Medical Shop</div>
+                </div>
+                <div class="profile-avatar" id="profileAvatar">
+                    MS
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Reports & Analytics</h1>
+            <p class="page-subtitle">Comprehensive insights into your medical shop performance</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h2 class="filter-title">
+                <i class="fas fa-filter"></i>
+                Report Filters
+            </h2>
+            
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Date Range</label>
+                    <select class="filter-input" id="dateRange">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 3 months</option>
+                        <option value="365">Last year</option>
+                        <option value="custom">Custom range</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group" id="customDateGroup" style="display: none;">
+                    <label class="filter-label">From Date</label>
+                    <input type="date" class="filter-input" id="fromDate">
+                </div>
+                
+                <div class="filter-group" id="customDateGroup2" style="display: none;">
+                    <label class="filter-label">To Date</label>
+                    <input type="date" class="filter-input" id="toDate">
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Report Type</label>
+                    <select class="filter-input" id="reportType">
+                        <option value="overview">Overview</option>
+                        <option value="claims">Claims Analysis</option>
+                        <option value="performance">Performance</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <button class="filter-btn" onclick="generateReport()">
+                        <i class="fas fa-chart-line"></i>
+                        Generate Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="summary-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-pie"></i>
+                Key Metrics
+            </h2>
+            
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <div class="summary-title">Total Claims</div>
+                        <div class="summary-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                    </div>
+                    <div class="summary-value" id="totalClaimsReport">0</div>
+                    <div class="summary-desc">All-time processed claims</div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <div class="summary-title">Success Rate</div>
+                        <div class="summary-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="summary-value" id="successRate">0%</div>
+                    <div class="summary-desc">Completed vs total claims</div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <div class="summary-title">Avg Response Time</div>
+                        <div class="summary-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="summary-value" id="avgResponseTime">0h</div>
+                    <div class="summary-desc">Average claim processing time</div>
+                </div>
+                
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <div class="summary-title">Revenue Impact</div>
+                        <div class="summary-icon">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                    </div>
+                    <div class="summary-value" id="revenueImpact">₹0</div>
+                    <div class="summary-desc">Estimated business value</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-line"></i>
+                        Claims Trend
+                    </h3>
+                </div>
+                <div class="chart-body">
+                    <canvas id="claimsTrendChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-doughnut"></i>
+                        Claims by Status
+                    </h3>
+                </div>
+                <div class="chart-body">
+                    <canvas id="claimsStatusChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Section -->
+        <div class="table-section">
+            <div class="table-header">
+                <h2 class="table-title">
+                    <i class="fas fa-table"></i>
+                    Recent Claims Activity
+                </h2>
+                <a href="#" class="export-btn" onclick="exportData()">
+                    <i class="fas fa-download"></i>
+                    Export CSV
+                </a>
+            </div>
+            
+            <div class="table-wrapper">
+                <div id="reportsTable">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading reports data...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="/dashboard" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="mobile-nav-text">Dashboard</div>
+            </a>
+            <a href="/my-claims" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="mobile-nav-text">My Claims</div>
+            </a>
+            <a href="/profile" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="mobile-nav-text">Profile</div>
+            </a>
+            <a href="/reports" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="mobile-nav-text">Reports</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        let claimsTrendChart, claimsStatusChart;
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileInfo();
+            initializeCharts();
+            generateReport();
+            
+            // Handle date range change
+            document.getElementById('dateRange').addEventListener('change', function() {
+                const customGroups = document.querySelectorAll('[id^="customDateGroup"]');
+                if (this.value === 'custom') {
+                    customGroups.forEach(group => group.style.display = 'block');
+                } else {
+                    customGroups.forEach(group => group.style.display = 'none');
+                }
+            });
+        });
+
+        async function loadProfileInfo() {
+            try {
+                const response = await fetch('/shop/profile');
+                const data = await response.json();
+                
+                if (response.ok && data.shop) {
+                    document.getElementById('profileName').textContent = data.shop.shop_name;
+                    const initials = data.shop.shop_name.split(' ').map(word => word[0]).join('').substring(0, 2);
+                    document.getElementById('profileAvatar').textContent = initials.toUpperCase();
+                } else {
+                    document.getElementById('profileName').textContent = 'Medical Shop';
+                }
+            } catch (error) {
+                console.error('Error loading profile info:', error);
+                document.getElementById('profileName').textContent = 'Medical Shop';
+            }
+        }
+
+        function initializeCharts() {
+            // Claims Trend Chart
+            const trendCtx = document.getElementById('claimsTrendChart').getContext('2d');
+            claimsTrendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Claims Processed',
+                        data: [],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Claims Status Chart
+            const statusCtx = document.getElementById('claimsStatusChart').getContext('2d');
+            claimsStatusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Pending', 'Processing'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: [
+                            '#27ae60',
+                            '#f39c12',
+                            '#3498db'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function generateReport() {
+            try {
+                // Load summary data
+                await loadSummaryData();
+                
+                // Load chart data
+                await loadChartData();
+                
+                // Load table data
+                await loadTableData();
+                
+            } catch (error) {
+                console.error('Error generating report:', error);
+                showError('Failed to generate report');
+            }
+        }
+
+        async function loadSummaryData() {
+            try {
+                const response = await fetch('/shop/statistics');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('totalClaimsReport').textContent = data.total_claims || 0;
+                    
+                    // Calculate success rate
+                    const totalClaims = data.total_claims || 0;
+                    const completedClaims = data.completed_claims || 0;
+                    const successRate = totalClaims > 0 ? Math.round((completedClaims / totalClaims) * 100) : 0;
+                    document.getElementById('successRate').textContent = successRate + '%';
+                    
+                    // Mock data for other metrics
+                    document.getElementById('avgResponseTime').textContent = '2.5h';
+                    document.getElementById('revenueImpact').textContent = '₹' + (data.total_revenue || 0);
+                }
+            } catch (error) {
+                console.error('Error loading summary data:', error);
+            }
+        }
+
+        async function loadChartData() {
+            try {
+                // Mock data for demonstration
+                const trendData = {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    data: [12, 19, 15, 25, 22, 30]
+                };
+                
+                // Update trend chart
+                claimsTrendChart.data.labels = trendData.labels;
+                claimsTrendChart.data.datasets[0].data = trendData.data;
+                claimsTrendChart.update();
+                
+                // Load actual claims data for status chart
+                const response = await fetch('/shop/statistics');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const completed = data.completed_claims || 0;
+                    const pending = data.pending_claims || 0;
+                    const processing = Math.max(0, (data.total_claims || 0) - completed - pending);
+                    
+                    claimsStatusChart.data.datasets[0].data = [completed, pending, processing];
+                    claimsStatusChart.update();
+                }
+            } catch (error) {
+                console.error('Error loading chart data:', error);
+            }
+        }
+
+        async function loadTableData() {
+            try {
+                const response = await fetch('/shop/claimed-recommendations?per_page=10');
+                const data = await response.json();
+                
+                const tableContainer = document.getElementById('reportsTable');
+                
+                if (response.ok && data.recommendations && data.recommendations.length > 0) {
+                    const tableHTML = `
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Rec ID</th>
+                                    <th>Farmer Name</th>
+                                    <th>District</th>
+                                    <th>Claimed Date</th>
+                                    <th>Status</th>
+                                    <th>Medicines</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.recommendations.map(rec => `
+                                    <tr>
+                                        <td>#${rec.id}</td>
+                                        <td>${rec.farmer_name || 'N/A'}</td>
+                                        <td>${rec.district || 'N/A'}</td>
+                                        <td>${formatDate(rec.claimed_at)}</td>
+                                        <td>
+                                            <span class="status-badge ${(rec.status || 'completed').toLowerCase()}">
+                                                ${rec.status || 'Completed'}
+                                            </span>
+                                        </td>
+                                        <td>${rec.medicines ? rec.medicines.length : 0} items</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                    tableContainer.innerHTML = tableHTML;
+                } else {
+                    tableContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <h3>No Data Available</h3>
+                            <p>No claims data found for the selected period</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading table data:', error);
+                showTableError();
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Recently';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function showTableError() {
+            const tableContainer = document.getElementById('reportsTable');
+            tableContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Data</h3>
+                    <p>Unable to load reports data. Please try again later.</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            console.error(message);
+            // You could add a toast notification here
+        }
+
+        function exportData() {
+            // Mock CSV export
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Rec ID,Farmer Name,District,Claimed Date,Status,Medicines\n"
+                + "001,John Farmer,Mumbai,2024-01-15,Completed,3\n"
+                + "002,Jane Smith,Pune,2024-01-14,Pending,2\n";
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "medical_shop_reports.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/logout', { method: 'POST' })
+                    .then(() => {
+                        window.location.href = '/';
+                    })
+                    .catch((error) => {
+                        console.error('Logout error:', error);
+                        window.location.href = '/';
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Claims - Medical Shop Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .main-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+        
+        .card h2 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .recommendation-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .medicine-item {
+            background: white;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: #28a745;
+            color: white;
+        }
+        
+        .claim-info {
+            background: #e8f5e8;
+            border: 1px solid #c3e6c3;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #dee2e6;
+            background: white;
+            color: #495057;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn:hover:not(.disabled) {
+            background: #007bff;
+            color: white;
+        }
+        
+        .page-btn.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .page-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 My Claimed Recommendations</h1>
+        <div class="nav-buttons">
+            <a href="/dashboard" class="nav-btn">🏠 Dashboard</a>
+            <a href="/search" class="nav-btn">🔍 Search</a>
+            <a href="/profile" class="nav-btn">👤 Profile</a>
+            <button onclick="logout()" class="nav-btn">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Statistics -->
+        <div class="card">
+            <h2>📊 Claims Summary</h2>
+            <div class="stats-row" id="claimsStats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalClaims">0</div>
+                    <div class="stat-label">Total Claims</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todaysClaims">0</div>
+                    <div class="stat-label">Today's Claims</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="thisWeekClaims">0</div>
+                    <div class="stat-label">This Week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="thisMonthClaims">0</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card">
+            <h2>🔍 Filter Claims</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="dateFrom">From Date:</label>
+                    <input type="date" id="dateFrom" name="dateFrom">
+                </div>
+                <div class="filter-group">
+                    <label for="dateTo">To Date:</label>
+                    <input type="date" id="dateTo" name="dateTo">
+                </div>
+                <div class="filter-group">
+                    <label for="animalFilter">Animal Type:</label>
+                    <select id="animalFilter" name="animalFilter">
+                        <option value="">All Animals</option>
+                        <option value="Cow">Cow</option>
+                        <option value="Buffalo">Buffalo</option>
+                        <option value="Goat">Goat</option>
+                        <option value="Sheep">Sheep</option>
+                        <option value="Pig">Pig</option>
+                        <option value="Chicken">Chicken</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button onclick="applyFilters()" class="btn btn-primary">🔍 Apply Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Claims List -->
+        <div class="card">
+            <h2>📋 Claimed Recommendations</h2>
+            <div id="claimsContainer">
+                <div class="loading">Loading your claims...</div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        const perPage = 10;
+        
+        // Load claims when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadClaims();
+            loadStats();
+        });
+
+        async function loadClaims(page = 1, filters = {}) {
+            try {
+                currentPage = page;
+                
+                const params = new URLSearchParams({
+                    page: page,
+                    per_page: perPage,
+                    ...filters
+                });
+                
+                document.getElementById('claimsContainer').innerHTML = '<div class="loading">Loading your claims...</div>';
+                
+                const response = await fetch('/shop/claimed-recommendations?' + params);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayClaims(result.recommendations);
+                    updatePagination(result.pagination);
+                } else {
+                    if (response.status === 401) {
+                        window.location.href = '/';
+                    } else {
+                        showError('Failed to load claims: ' + result.error);
+                    }
+                }
+            } catch (error) {
+                showError('Failed to load claims: ' + error.message);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/shop/statistics');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    updateStats(result.statistics);
+                } else {
+                    console.error('Failed to load stats:', result.error);
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        function updateStats(stats) {
+            document.getElementById('totalClaims').textContent = stats.total_claims || 0;
+            document.getElementById('todaysClaims').textContent = stats.todays_claims || 0;
+            document.getElementById('thisWeekClaims').textContent = stats.this_week_claims || 0;
+            document.getElementById('thisMonthClaims').textContent = stats.this_month_claims || 0;
+        }
+
+        function displayClaims(claims) {
+            const container = document.getElementById('claimsContainer');
+            
+            if (claims.length === 0) {
+                container.innerHTML = '<div class="no-data">No claimed recommendations found</div>';
+                return;
+            }
+
+            let html = '';
+            
+            claims.forEach(rec => {
+                html += `
+                    <div class="recommendation-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h3 style="color: #2d3748;">Recommendation #${rec.id}</h3>
+                                <p><strong>Farmer:</strong> ${rec.farmer.name} (${rec.farmer.mobile_no})</p>
+                                <p><strong>Doctor:</strong> ${rec.doctor.name} - ${rec.doctor.hospital}</p>
+                                <p><strong>Location:</strong> ${rec.farmer.area}, Pincode: ${rec.farmer.pincode}</p>
+                            </div>
+                            <span class="status-badge">✅ Claimed</span>
+                        </div>
+                        
+                        <div class="claim-info">
+                            <p><strong>🕒 Claimed On:</strong> ${new Date(rec.claimed_at).toLocaleString()}</p>
+                            ${rec.claim_notes ? `<p><strong>📝 Notes:</strong> ${rec.claim_notes}</p>` : ''}
+                        </div>
+                        
+                        <h4 style="margin: 1rem 0;">💊 Medicine Details:</h4>
+                `;
+                
+                rec.items.forEach(item => {
+                    html += `
+                        <div class="medicine-item">
+                            <p><strong>Medicine:</strong> ${item.antibiotic_name}</p>
+                            <p><strong>Disease:</strong> ${item.disease}</p>
+                            <p><strong>Animal:</strong> ${item.animal_type} (${item.weight}kg, ${item.age} days)</p>
+                            <p><strong>Dosage:</strong> ${item.single_dose_ml}ml × ${item.daily_frequency}/day for ${item.treatment_days} days</p>
+                            <p><strong>Total Required:</strong> ${item.total_treatment_dosage_ml}ml</p>
+                            ${item.start_date ? `<p><strong>🗓️ Treatment Period:</strong> ${item.start_date} to ${item.end_date}</p>` : ''}
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function updatePagination(pagination) {
+            totalPages = pagination.total_pages;
+            const container = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            
+            // Previous button
+            html += `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                     onclick="loadClaims(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                     Previous</button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    html += `<button class="page-btn active">${i}</button>`;
+                } else if (Math.abs(i - currentPage) <= 2 || i === 1 || i === totalPages) {
+                    html += `<button class="page-btn" onclick="loadClaims(${i})">${i}</button>`;
+                } else if (Math.abs(i - currentPage) === 3) {
+                    html += `<span>...</span>`;
+                }
+            }
+            
+            // Next button
+            html += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                     onclick="loadClaims(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                     Next</button>`;
+            
+            container.innerHTML = html;
+        }
+
+        function applyFilters() {
+            const filters = {};
+            
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const animalFilter = document.getElementById('animalFilter').value;
+            
+            if (dateFrom) filters.from_date = dateFrom;
+            if (dateTo) filters.to_date = dateTo;
+            if (animalFilter) filters.animal_type = animalFilter;
+            
+            loadClaims(1, filters);
+        }
+
+        function showError(message) {
+            document.getElementById('claimsContainer').innerHTML = 
+                `<div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 6px; border-left: 4px solid #dc3545;">${message}</div>`;
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/shop/logout', {
+                    method: 'POST'
+                });
+                
+                // Redirect to login page regardless of response
+                window.location.href = '/';
+            } catch (error) {
+                // Still redirect on error
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>

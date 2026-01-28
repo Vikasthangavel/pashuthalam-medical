@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Shop Dashboard - Pashuthalam</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #000000; /* Black for main elements */
+            --primary-hover: #27ae60; /* Green for hover states */
+            --secondary-color: #27ae60; /* Green for accent elements */
+            --accent-color: #27ae60; /* Green for highlights */
+            --success-color: #27ae60; /* Green for success */
+            --warning-color: #f39c12; /* Orange for warnings */
+            --danger-color: #e74c3c; /* Red for errors */
+            --light-bg: #ffffff; /* White for background */
+            --white: #ffffff; /* White */
+            --dark-text: #000000; /* Black for text */
+            --light-text: #333333; /* Dark gray for secondary text */
+            --border-color: #f0f0f0; /* Very light gray for borders */
+            --primary-dark: #218c53; /* Dark green for hover states */
+            --active-bg: rgba(39, 174, 96, 0.1); /* Light green background for active items */
+            --active-text: #27ae60; /* Green text for active items */
+            --shadow: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-hover: 0 3px 8px rgba(0,0,0,0.08);
+            --border-radius: 8px;
+            --transition: all 0.2s ease-in-out;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--white);
+            color: var(--dark-text);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        /* Navigation */
+        .navbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 70px;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .nav-brand:hover {
+            color: var(--secondary-color);
+        }
+        
+        .nav-brand i {
+            font-size: 1.8rem;
+            transition: var(--transition);
+        }
+        
+        .brand-logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+        
+        .nav-brand:hover i {
+            color: var(--secondary-color);
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            color: var(--dark-text);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: var(--secondary-color);
+        }
+        
+        .nav-link.active {
+            color: var(--secondary-color);
+            background: var(--active-bg);
+        }
+        
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .profile-info {
+            text-align: right;
+        }
+        
+        .profile-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+        
+        .profile-role {
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+        
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .profile-avatar:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .logout-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--white);
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: var(--light-text);
+            font-size: 1.1rem;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--secondary-color);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-title {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.claims {
+            background: linear-gradient(135deg, var(--accent-color), #2980b9);
+        }
+        
+        .stat-icon.pending {
+            background: linear-gradient(135deg, var(--warning-color), #d68910);
+        }
+        
+        .stat-icon.completed {
+            background: linear-gradient(135deg, var(--success-color), #229954);
+        }
+        
+        .stat-icon.revenue {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+        
+        .stat-change.neutral {
+            color: var(--light-text);
+        }
+        
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        /* Card styles */
+        .card, .activity-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        
+        .card:hover, .activity-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: between;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-desc {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .activity-time {
+            color: var(--light-text);
+            font-size: 0.8rem;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            text-decoration: none;
+            color: var(--dark-text);
+            transition: var(--transition);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .action-button:last-child {
+            border-bottom: none;
+        }
+        
+        .action-button:hover {
+            background: rgba(39, 174, 96, 0.05);
+            color: var(--secondary-color);
+        }
+        
+        .action-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+        }
+        
+        .action-content h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .action-content p {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 8px;
+            min-width: 70px;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--secondary-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mobile-nav-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-container {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 90px;
+            }
+            
+            .navbar {
+                display: none;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1.5rem;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+            
+            .mobile-nav {
+                display: block;
+            }
+            
+            .content-grid {
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-container {
+                padding: 1rem 0.75rem;
+            }
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--light-text);
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.75rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--light-text);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+        }
+        
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+
+        /* Search Card Styles */
+        .search-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .search-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .search-form {
+            padding: 0;
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--background-color);
+            visibility: visible !important;
+            opacity: 1 !important;
+            display: block !important;
+            pointer-events: auto !important;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+            visibility: visible !important;
+            opacity: 1 !important;
+            display: block !important;
+        }
+
+        /* Date Input Specific Styling */
+        input[type="date"].search-input {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: white !important;
+            background-image: none !important;
+            color: var(--text-primary) !important;
+            font-family: inherit;
+            position: relative;
+            border: 2px solid var(--border-color) !important;
+        }
+
+        input[type="date"].search-input::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+
+        input[type="date"].search-input:before {
+            content: attr(placeholder) !important;
+            color: var(--text-secondary);
+            margin-right: 0.5em;
+        }
+
+        input[type="date"].search-input:focus:before,
+        input[type="date"].search-input:valid:before {
+            display: none;
+        }
+
+        /* Form group styling for modal */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Modal content improvements */
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white !important;
+        }
+
+        /* Ensure search results and buttons are not affected by modals */
+        #searchResult {
+            position: relative;
+            z-index: 1;
+        }
+
+        #searchResult * {
+            pointer-events: auto !important;
+        }
+        
+        /* Global button styles */
+        button {
+            padding: 0.75rem 1.5rem;
+            background: var(--white);
+            color: var(--dark-text) !important;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        button:hover {
+            color: var(--secondary-color) !important;
+            border-color: var(--secondary-color);
+        }
+        
+        button i,
+        button span {
+            color: inherit !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Primary button */
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--white) !important;
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            color: var(--white) !important;
+            border-color: var(--primary-hover);
+        }
+        
+        /* Search and claim button styles */
+        .search-btn,
+        .claim-btn {
+            background: var(--white);
+            color: var(--dark-text) !important;
+            border: 1px solid var(--border-color);
+            font-weight: 500;
+            display: inline-flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .search-btn:hover,
+        .claim-btn:hover {
+            color: var(--secondary-color) !important;
+            border-color: var(--secondary-color);
+        }
+        
+        .search-btn span,
+        .claim-btn span {
+            display: inline !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            color: inherit !important;
+        }
+
+        #searchResult:hover .claim-btn,
+        #searchResult .claim-btn:hover {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        #searchResult .claim-btn {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            z-index: 1000 !important;
+            position: relative !important;
+            color: #000000 !important; /* Black text */
+        }
+
+        #searchResult .claim-btn:hover,
+        #searchResult .claim-btn:focus,
+        #searchResult .claim-btn:active {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            color: #27ae60 !important; /* Green text on interaction */
+        }
+        
+        /* Ensure all text inside buttons is visible */
+        #searchResult .claim-btn *,
+        .search-btn * {
+            color: inherit !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            display: inline-block !important;
+        }
+
+        /* Override any gradient backgrounds for date inputs */
+        .modal-content input[type="date"] {
+            background: white !important;
+            background-image: none !important;
+            background-color: white !important;
+            border: 2px solid #e2e8f0 !important;
+            color: #1a202c !important;
+        }
+
+        .modal-content input[type="date"]:focus {
+            background: white !important;
+            background-image: none !important;
+            background-color: white !important;
+            border-color: var(--primary-color) !important;
+        }
+
+        .search-btn {
+            padding: 1rem 2rem;
+            background: var(--white);
+            color: var(--dark-text) !important;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex !important;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative;
+            z-index: 100;
+            pointer-events: auto !important;
+        }
+
+        .search-btn:hover {
+            background: var(--white);
+            color: var(--secondary-color) !important;
+            border-color: var(--secondary-color);
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+        
+        /* Ensure button text is always visible */
+        .search-btn i, 
+        .search-btn span,
+        .search-btn::after,
+        .search-btn::before {
+            color: inherit !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            display: inline-block !important;
+        }
+
+        .search-result {
+            margin-top: 1.5rem;
+        }
+
+        .recommendation-details {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            transition: var(--transition);
+        }
+
+        .recommendation-details:hover {
+            border-color: var(--secondary-color);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .recommendation-details h4 {
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recommendation-details:hover h4 {
+            color: var(--secondary-color);
+        }
+
+        .already-claimed {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid #f39c12;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            transition: var(--transition);
+        }
+
+        .already-claimed:hover {
+            border-color: #f39c12;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .already-claimed h4 {
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .already-claimed:hover h4 {
+            color: #f39c12;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--light-text);
+            min-width: 120px;
+        }
+
+        .detail-value {
+            color: var(--dark-text);
+            text-align: right;
+            flex: 1;
+        }
+
+        .medicine-list h5 {
+            color: var(--dark-text);
+            margin: 1rem 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recommendation-details:hover .medicine-list h5 {
+            color: var(--secondary-color);
+        }
+
+        .medicine-item {
+            background: var(--surface-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .claim-btn {
+            width: 100% !important;
+            padding: 1rem !important;
+            background: var(--white) !important;
+            color: var(--dark-text) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: var(--border-radius) !important;
+            font-weight: 500 !important;
+            cursor: pointer !important;
+            transition: var(--transition) !important;
+            margin-top: 1rem !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 999 !important;
+            position: relative !important;
+            pointer-events: auto !important;
+        }
+
+        .claim-btn:hover {
+            background: var(--white) !important;
+            color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .claim-btn:focus {
+            background: var(--white) !important;
+            color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            outline: none !important;
+        }
+
+        .claim-btn:active {
+            background: var(--white) !important;
+            color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Ensure button text is always visible */
+        .claim-btn i, 
+        .claim-btn span,
+        .claim-btn::after,
+        .claim-btn::before {
+            color: inherit !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            display: inline-block !important;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-overlay.show {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 90%;
+            max-width: 450px;
+            animation: slideIn 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--surface-color);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-btn-primary {
+            background: var(--white);
+            color: var(--dark-text);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--white);
+            color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .modal-btn-secondary {
+            background: var(--surface-color);
+            color: var(--text-secondary);
+        }
+
+        .modal-btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .loading-modal {
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .search-input-group {
+                flex-direction: column;
+            }
+            
+            .search-btn {
+                justify-content: center;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            
+            .detail-value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="nav-brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Pashuthalam Logo" class="brand-logo" />
+                Pashuthalam
+            </a>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/dashboard" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/my-claims" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        My Claims
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="nav-profile">
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName">Loading...</div>
+                    <div class="profile-role">Medical Shop</div>
+                </div>
+                <div class="profile-avatar" id="profileAvatar" onclick="toggleProfileMenu()">
+                    MS
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Welcome back! Here's what's happening with your medical shop today.</p>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Claims</div>
+                    <div class="stat-icon claims">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalClaims">0</div>
+                <div class="stat-change neutral">
+                    <i class="fas fa-history"></i>
+                    All time
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Today's Claims</div>
+                    <div class="stat-icon completed">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="todaysClaims">0</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-check-circle"></i>
+                    Today
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Quick Search -->
+            <div class="search-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-search"></i>
+                        Quick Search Recommendation
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form id="quickSearchForm" class="search-form">
+                        <div class="search-input-group" style="display: flex !important; visibility: visible !important; opacity: 1 !important;">
+                            <input type="number" id="recId" name="rec_id" class="search-input" 
+                                   placeholder="Enter Recommendation ID (e.g. 123)" min="1" required
+                                   style="display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;">
+                            <button type="submit" class="search-btn" style="display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;">
+                                <i class="fas fa-search" style="color: inherit !important; visibility: visible !important;"></i>
+                                <span style="color: inherit !important; visibility: visible !important;">Search & View</span>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="searchResult" class="search-result"></div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-history"></i>
+                        Recent Activity
+                    </h2>
+                </div>
+                <div class="card-body" id="recentActivity">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading recent activity...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-bolt"></i>
+                        Quick Actions
+                    </h2>
+                </div>
+                
+                <a href="/my-claims" class="action-button">
+                    <div class="action-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="action-content">
+                        <h4>View My Claims</h4>
+                        <p>Check your claimed recommendations</p>
+                    </div>
+                </a>
+                
+                <a href="/profile" class="action-button">
+                    <div class="action-icon">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <div class="action-content">
+                        <h4>Update Profile</h4>
+                        <p>Manage your shop information</p>
+                    </div>
+                </a>
+                
+                <a href="/reports" class="action-button">
+                    <div class="action-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="action-content">
+                        <h4>View Reports</h4>
+                        <p>Analytics and insights</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Date Input Modal -->
+    <div id="dateModal" class="modal-overlay" onclick="if(event.target === this) closeDateModal()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-calendar-plus"></i>
+                    Set Treatment Start Date
+                </h3>
+                <button class="modal-close" onclick="closeDateModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="treatmentStartDate" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary);">Treatment Start Date</label>
+                    <input type="date" id="treatmentStartDate" class="search-input" 
+                           placeholder="Select treatment start date"
+                           style="margin-bottom: 1rem; width: 100%; background: white !important; background-image: none !important;"
+                           required>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
+                        <i class="fas fa-info-circle"></i>
+                        Select the date when the farmer should start the treatment
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeDateModal()">
+                    Cancel
+                </button>
+                <button class="modal-btn modal-btn-primary" onclick="confirmClaim()">
+                    <i class="fas fa-check"></i>
+                    Confirm Claim
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-body loading-modal">
+                <div class="loading-spinner"></div>
+                <h3 style="margin-bottom: 0.5rem;">Processing Claim...</h3>
+                <p style="color: var(--text-secondary); margin: 0;">
+                    Sending WhatsApp message to farmer
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="/dashboard" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="mobile-nav-text">Dashboard</div>
+            </a>
+            <a href="/my-claims" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="mobile-nav-text">My Claims</div>
+            </a>
+            <a href="/profile" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="mobile-nav-text">Profile</div>
+            </a>
+            <a href="/reports" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="mobile-nav-text">Reports</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Load dashboard data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileInfo();
+            loadStatistics();
+            loadRecentActivity();
+            updateActiveNavigation();
+        });
+
+        async function loadProfileInfo() {
+            try {
+                const response = await fetch('/shop/profile');
+                const data = await response.json();
+                
+                if (response.ok && data.shop) {
+                    document.getElementById('profileName').textContent = data.shop.shop_name;
+                    const initials = data.shop.shop_name.split(' ').map(word => word[0]).join('').substring(0, 2);
+                    document.getElementById('profileAvatar').textContent = initials.toUpperCase();
+                } else {
+                    document.getElementById('profileName').textContent = 'Medical Shop';
+                }
+            } catch (error) {
+                console.error('Error loading profile info:', error);
+                document.getElementById('profileName').textContent = 'Medical Shop';
+            }
+        }
+
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/shop/statistics');
+                const data = await response.json();
+                
+                if (response.ok && data.statistics) {
+                    const stats = data.statistics;
+                    document.getElementById('totalClaims').textContent = stats.total_claims || 0;
+                    document.getElementById('todaysClaims').textContent = stats.todays_claims || 0;
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const response = await fetch('/shop/claimed-recommendations?per_page=5');
+                const data = await response.json();
+                
+                const activityContainer = document.getElementById('recentActivity');
+                
+                if (response.ok && data.recommendations && data.recommendations.length > 0) {
+                    activityContainer.innerHTML = data.recommendations.map(rec => `
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Recommendation Claimed</div>
+                                <div class="activity-desc">Recommendation #${rec.id} for ${rec.farmer.name}</div>
+                                <div class="activity-time">${formatDate(rec.claimed_at)}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    activityContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-clipboard-list"></i>
+                            <h3>No recent activity</h3>
+                            <p>Start processing claims to see activity here</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+                document.getElementById('recentActivity').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error loading activity</h3>
+                        <p>Please refresh the page to try again</p>
+                    </div>
+                `;
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Recently';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            return date.toLocaleDateString();
+        }
+
+        function updateActiveNavigation() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-item');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/logout', { method: 'POST' })
+                    .then(() => {
+                        window.location.href = '/';
+                    })
+                    .catch((error) => {
+                        console.error('Logout error:', error);
+                        window.location.href = '/';
+                    });
+            }
+        }
+
+        // Update navigation on page load
+        updateActiveNavigation();
+
+        // Quick Search Functionality
+        document.getElementById('quickSearchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const recId = formData.get('rec_id');
+            
+            if (!recId) {
+                showSearchResult('error', 'Please enter a recommendation ID');
+                return;
+            }
+            
+            showSearchLoading();
+            
+            try {
+                const response = await fetch(`/recommendations/${recId}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayRecommendationDetails(result.recommendation);
+                } else {
+                    showSearchResult('error', result.error || 'Recommendation not found');
+                }
+            } catch (error) {
+                showSearchResult('error', 'Failed to fetch recommendation: ' + error.message);
+            }
+        });
+
+        function showSearchLoading() {
+            document.getElementById('searchResult').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading recommendation details...
+                </div>
+            `;
+        }
+
+        function showSearchResult(type, message) {
+            const className = type === 'error' ? 'error-message' : 
+                             type === 'success' ? 'success-message' : 'already-claimed';
+            document.getElementById('searchResult').innerHTML = `
+                <div class="${className}">${message}</div>
+            `;
+        }
+
+        function displayRecommendationDetails(rec) {
+            const container = document.getElementById('searchResult');
+            
+            if (rec.is_claimed) {
+                container.innerHTML = `
+                    <div class="already-claimed">
+                        <h4><i class="fas fa-lock"></i> Recommendation #${rec.id} - Already Claimed</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Farmer:</span>
+                            <span class="detail-value">${rec.farmer.name} (${rec.farmer.mobile_no})</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Claimed by:</span>
+                            <span class="detail-value">${rec.claimed_by_shop ? rec.claimed_by_shop.shop_name : 'Unknown Shop'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Claimed on:</span>
+                            <span class="detail-value">${formatDate(rec.claimed_at)}</span>
+                        </div>
+                        ${rec.claim_notes ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Notes:</span>
+                            <span class="detail-value">${rec.claim_notes}</span>
+                        </div>` : ''}
+                    </div>
+                `;
+            } else {
+                let html = `
+                    <div class="recommendation-details">
+                        <h4><i class="fas fa-check-circle"></i> Recommendation #${rec.id} - Available to Claim</h4>
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Farmer:</span>
+                            <span class="detail-value">${rec.farmer.name} (${rec.farmer.mobile_no})</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Doctor:</span>
+                            <span class="detail-value">${rec.doctor.name} - ${rec.doctor.hospital}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Location:</span>
+                            <span class="detail-value">${rec.farmer.area}, Pincode: ${rec.farmer.pincode}</span>
+                        </div>
+                        
+                        <div class="medicine-list">
+                            <h5><i class="fas fa-pills"></i> Medicine Details:</h5>
+                `;
+                
+                rec.items.forEach(item => {
+                    html += `
+                        <div class="medicine-item">
+                            <div class="detail-row">
+                                <span class="detail-label">Medicine:</span>
+                                <span class="detail-value">${item.antibiotic_name}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Animal:</span>
+                                <span class="detail-value">${item.animal_type} (${item.weight}kg, ${item.age} months)</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Disease:</span>
+                                <span class="detail-value">${item.disease}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Dosage:</span>
+                                <span class="detail-value">${item.total_daily_dosage_ml}ml/day for ${item.treatment_days} days</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Frequency:</span>
+                                <span class="detail-value">${item.daily_frequency} times daily</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                        <button onclick="claimRecommendation(${rec.id})" class="claim-btn" 
+                                style="display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; z-index: 1000 !important; position: relative !important; color: #000000 !important;">
+                            <i class="fas fa-hand-holding-medical" style="color: inherit !important; visibility: visible !important;"></i> 
+                            <span style="color: inherit !important; visibility: visible !important;">Claim This Recommendation</span>
+                        </button>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+            }
+        }
+
+        let currentClaimRecId = null;
+
+        // Ensure claim buttons remain visible
+        function ensureButtonVisibility() {
+            const claimBtns = document.querySelectorAll('.claim-btn');
+            claimBtns.forEach(btn => {
+                btn.style.display = 'block';
+                btn.style.visibility = 'visible';
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            });
+        }
+
+        // Call this function periodically to ensure buttons stay visible
+        setInterval(ensureButtonVisibility, 100);
+
+        function claimRecommendation(recId) {
+            currentClaimRecId = recId;
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('treatmentStartDate');
+            dateInput.min = today;
+            dateInput.value = today;
+            
+            // Show modal with proper display method
+            const modal = document.getElementById('dateModal');
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            
+            // Focus on date input for better UX
+            setTimeout(() => {
+                dateInput.focus();
+            }, 100);
+        }
+
+        function closeDateModal() {
+            const modal = document.getElementById('dateModal');
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            currentClaimRecId = null;
+        }
+
+        async function confirmClaim() {
+            const startDate = document.getElementById('treatmentStartDate').value;
+            
+            if (!startDate) {
+                showSearchResult('error', 'Please select a start date');
+                return;
+            }
+            
+            // Close date modal and show loading modal
+            document.getElementById('dateModal').style.display = 'none';
+            document.getElementById('dateModal').classList.remove('show');
+            const loadingModal = document.getElementById('loadingModal');
+            loadingModal.style.display = 'flex';
+            loadingModal.classList.add('show');
+            
+            try {
+                const response = await fetch(`/recommendations/${currentClaimRecId}/claim`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        start_date: startDate,
+                        notes: ''
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Close loading modal
+                const loadingModal = document.getElementById('loadingModal');
+                loadingModal.style.display = 'none';
+                loadingModal.classList.remove('show');
+                
+                if (response.ok) {
+                    showSearchResult('success', `Successfully claimed recommendation #${currentClaimRecId}!`);
+                    // Refresh the recommendation details to show claimed status
+                    setTimeout(() => {
+                        document.getElementById('quickSearchForm').dispatchEvent(new Event('submit'));
+                    }, 1500);
+                    // Reload activity to show the new claim
+                    loadRecentActivity();
+                } else {
+                    showSearchResult('error', result.error || 'Failed to claim recommendation');
+                }
+            } catch (error) {
+                // Close loading modal on error
+                const loadingModal = document.getElementById('loadingModal');
+                loadingModal.style.display = 'none';
+                loadingModal.classList.remove('show');
+                showSearchResult('error', 'Failed to claim recommendation: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

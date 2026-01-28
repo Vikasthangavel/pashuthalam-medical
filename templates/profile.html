@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Pashuthalam</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #27ae60;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --dark-text: #2c3e50;
+            --light-text: #7f8c8d;
+            --border-color: #e9ecef;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-hover: 0 5px 25px rgba(0,0,0,0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        /* Navigation - Reuse from dashboard */
+        .navbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 70px;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .nav-brand i {
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+        
+        .brand-logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            color: var(--light-text);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--secondary-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .profile-info {
+            text-align: right;
+        }
+        
+        .profile-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+        
+        .profile-role {
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+        
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .profile-avatar:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .logout-btn {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: var(--light-text);
+            font-size: 1.1rem;
+        }
+        
+        /* Profile Layout */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+        
+        /* Profile Card */
+        .profile-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            height: fit-content;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin: 0 auto 1rem;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .profile-name-large {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-type {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+        
+        .profile-body {
+            padding: 2rem;
+        }
+        
+        .info-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .info-list {
+            list-style: none;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            font-weight: 500;
+            flex: 1;
+        }
+        
+        .info-value {
+            font-size: 0.95rem;
+            color: var(--dark-text);
+            font-weight: 500;
+            text-align: right;
+        }
+        
+        /* Profile Form */
+        .profile-form-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .form-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: between;
+        }
+        
+        .form-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .edit-toggle {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .edit-toggle:hover {
+            background: #2980b9;
+        }
+        
+        .form-body {
+            padding: 2rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        
+        .form-label.required::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+        
+        .form-input {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        .form-input:disabled {
+            background: var(--light-bg);
+            color: var(--light-text);
+            cursor: not-allowed;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #219a52;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--light-text);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--light-bg);
+            color: var(--dark-text);
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        /* Success/Error Messages */
+        .message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .message.success {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(39, 174, 96, 0.2);
+        }
+        
+        .message.error {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(231, 76, 60, 0.2);
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--light-text);
+            transition: var(--transition);
+            padding: 0.5rem;
+            border-radius: 8px;
+            min-width: 70px;
+        }
+        
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            color: var(--secondary-color);
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .mobile-nav-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mobile-nav-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--light-text);
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.75rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .main-container {
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 90px;
+            }
+            
+            .navbar {
+                display: none;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .mobile-nav {
+                display: block;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem 0.75rem;
+            }
+            
+            .profile-header {
+                padding: 1.5rem;
+            }
+            
+            .profile-body {
+                padding: 1.5rem;
+            }
+            
+            .form-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="nav-brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Pashuthalam Logo" class="brand-logo" />
+                Pashuthalam
+            </a>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/my-claims" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i>
+                        My Claims
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link active">
+                        <i class="fas fa-user"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="nav-profile">
+                <div class="profile-info">
+                    <div class="profile-name" id="navProfileName">Loading...</div>
+                    <div class="profile-role">Medical Shop</div>
+                </div>
+                <div class="profile-avatar" id="navProfileAvatar">
+                    MS
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Profile</h1>
+            <p class="page-subtitle">Manage your medical shop information and account settings</p>
+        </div>
+
+        <!-- Profile Layout -->
+        <div class="profile-layout">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar-large" id="profileAvatarLarge">
+                        MS
+                    </div>
+                    <div class="profile-name-large" id="profileNameLarge">Loading...</div>
+                    <div class="profile-type">Medical Shop</div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalClaimsProfile">0</div>
+                            <div class="stat-label">Total Claims</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="memberSince">2024</div>
+                            <div class="stat-label">Member Since</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-body">
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Basic Information
+                        </h3>
+                        <ul class="info-list">
+                            <li class="info-item">
+                                <span class="info-label">Shop ID</span>
+                                <span class="info-value" id="shopId">-</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">License Number</span>
+                                <span class="info-value" id="licenseNumber">-</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">Status</span>
+                                <span class="info-value" style="color: var(--success-color);">Active</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Location
+                        </h3>
+                        <ul class="info-list">
+                            <li class="info-item">
+                                <span class="info-label">District</span>
+                                <span class="info-value" id="profileDistrict">-</span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">State</span>
+                                <span class="info-value" id="profileState">-</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Form -->
+            <div class="profile-form-card">
+                <div class="form-header">
+                    <h2 class="form-title">
+                        <i class="fas fa-edit"></i>
+                        Edit Profile
+                    </h2>
+                    <button class="edit-toggle" id="editToggle" onclick="toggleEdit()">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </button>
+                </div>
+                
+                <div class="form-body">
+                    <div id="message"></div>
+                    
+                    <form id="profileForm" onsubmit="saveProfile(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label required">Shop Name</label>
+                                <input type="text" class="form-input" id="shopName" name="shopName" disabled required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">Owner Name</label>
+                                <input type="text" class="form-input" id="ownerName" name="ownerName" disabled required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">Phone Number</label>
+                                <input type="tel" class="form-input" id="phoneNumber" name="phoneNumber" disabled required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="email" name="email" disabled>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">License Number</label>
+                                <input type="text" class="form-input" id="licenseNum" name="licenseNum" disabled required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">District</label>
+                                <select class="form-input" id="district" name="district" disabled required>
+                                    <option value="">Select District</option>
+                                    <option value="Mumbai">Mumbai</option>
+                                    <option value="Pune">Pune</option>
+                                    <option value="Nashik">Nashik</option>
+                                    <option value="Nagpur">Nagpur</option>
+                                    <option value="Aurangabad">Aurangabad</option>
+                                    <option value="Solapur">Solapur</option>
+                                    <option value="Kolhapur">Kolhapur</option>
+                                    <option value="Satara">Satara</option>
+                                    <option value="Sangli">Sangli</option>
+                                    <option value="Ahmednagar">Ahmednagar</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label class="form-label">Shop Address</label>
+                                <textarea class="form-input form-textarea" id="address" name="address" disabled placeholder="Enter complete shop address"></textarea>
+                            </div>
+                            
+
+                        </div>
+                        
+                        <div class="form-actions" id="formActions" style="display: none;">
+                            <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="/dashboard" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="mobile-nav-text">Dashboard</div>
+            </a>
+            <a href="/my-claims" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="mobile-nav-text">My Claims</div>
+            </a>
+            <a href="/profile" class="mobile-nav-item active">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="mobile-nav-text">Profile</div>
+            </a>
+            <a href="/reports" class="mobile-nav-item">
+                <div class="mobile-nav-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="mobile-nav-text">Reports</div>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        let isEditing = false;
+        let originalData = {};
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileData();
+            loadProfileStats();
+        });
+
+        async function loadProfileData() {
+            try {
+                const response = await fetch('/shop/profile');
+                const data = await response.json();
+                
+                if (response.ok && data.shop) {
+                    const shop = data.shop;
+                    originalData = { ...shop };
+                    
+                    // Update navigation
+                    document.getElementById('navProfileName').textContent = shop.shop_name;
+                    const initials = shop.shop_name.split(' ').map(word => word[0]).join('').substring(0, 2);
+                    document.getElementById('navProfileAvatar').textContent = initials.toUpperCase();
+                    
+                    // Update profile card
+                    document.getElementById('profileNameLarge').textContent = shop.shop_name;
+                    document.getElementById('profileAvatarLarge').textContent = initials.toUpperCase();
+                    document.getElementById('shopId').textContent = shop.id || '-';
+                    document.getElementById('licenseNumber').textContent = shop.license_number || '-';
+                    document.getElementById('profileDistrict').textContent = shop.district || '-';
+                    document.getElementById('profileState').textContent = 'Maharashtra';
+                    
+                    // Update form fields
+                    document.getElementById('shopName').value = shop.shop_name || '';
+                    document.getElementById('ownerName').value = shop.owner_name || '';
+                    document.getElementById('phoneNumber').value = shop.phone_number || '';
+                    document.getElementById('email').value = shop.email || '';
+                    document.getElementById('licenseNum').value = shop.license_number || '';
+                    document.getElementById('district').value = shop.district || '';
+                    document.getElementById('address').value = shop.address || '';
+                    
+                    // Set member since year
+                    if (shop.created_at) {
+                        const year = new Date(shop.created_at).getFullYear();
+                        document.getElementById('memberSince').textContent = year;
+                    }
+                } else {
+                    showMessage('Failed to load profile data', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showMessage('Error loading profile data', 'error');
+            }
+        }
+
+        async function loadProfileStats() {
+            try {
+                const response = await fetch('/shop/statistics');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('totalClaimsProfile').textContent = data.total_claims || 0;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function toggleEdit() {
+            isEditing = !isEditing;
+            const inputs = document.querySelectorAll('.form-input');
+            const editToggle = document.getElementById('editToggle');
+            const formActions = document.getElementById('formActions');
+            
+            if (isEditing) {
+                inputs.forEach(input => input.disabled = false);
+                editToggle.innerHTML = '<i class="fas fa-times"></i> Cancel';
+                editToggle.style.background = 'var(--danger-color)';
+                formActions.style.display = 'flex';
+            } else {
+                inputs.forEach(input => input.disabled = true);
+                editToggle.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                editToggle.style.background = 'var(--accent-color)';
+                formActions.style.display = 'none';
+                
+                // Reset form to original data
+                resetForm();
+            }
+        }
+
+        function cancelEdit() {
+            resetForm();
+            toggleEdit();
+        }
+
+        function resetForm() {
+            document.getElementById('shopName').value = originalData.shop_name || '';
+            document.getElementById('ownerName').value = originalData.owner_name || '';
+            document.getElementById('phoneNumber').value = originalData.phone_number || '';
+            document.getElementById('email').value = originalData.email || '';
+            document.getElementById('licenseNum').value = originalData.license_number || '';
+            document.getElementById('district').value = originalData.district || '';
+            document.getElementById('address').value = originalData.address || '';
+        }
+
+        async function saveProfile(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const profileData = {
+                shop_name: formData.get('shopName'),
+                owner_name: formData.get('ownerName'),
+                phone_number: formData.get('phoneNumber'),
+                email: formData.get('email'),
+                license_number: formData.get('licenseNum'),
+                district: formData.get('district'),
+                address: formData.get('address')
+            };
+            
+            try {
+                const response = await fetch('/shop/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(profileData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Profile updated successfully!', 'success');
+                    originalData = { ...profileData };
+                    toggleEdit();
+                    
+                    // Reload profile data to refresh display
+                    setTimeout(() => {
+                        loadProfileData();
+                    }, 1000);
+                } else {
+                    showMessage(result.message || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                showMessage('Error saving profile. Please try again.', 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `
+                <div class="message ${type}">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                    ${text}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/logout', { method: 'POST' })
+                    .then(() => {
+                        window.location.href = '/';
+                    })
+                    .catch((error) => {
+                        console.error('Logout error:', error);
+                        window.location.href = '/';
+                    });
+            }
+        }
+    </script>
+</body>
+</html>
